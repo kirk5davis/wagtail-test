@@ -26,6 +26,19 @@
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
+
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>WagTail Intro Site</strong></li>
+        </ul>
+        <ul>
+            {% for menu_item in menu_items %}
+                <li>
+                <a href="{{ menu_item.url }}" class="nav-link">{{ menu_item.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
         <main class="container">
             {% wagtailuserbar %}
 
