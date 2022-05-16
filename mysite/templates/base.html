@@ -1,4 +1,6 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static wagtailcore_tags wagtailuserbar menus_tags %}
+
+{% get_menu "main" as navigation %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -32,9 +34,11 @@
             <li><strong>WagTail Intro Site</strong></li>
         </ul>
         <ul>
-            {% for menu_item in menu_items %}
+            {% for menu_item in navigation.menu_items.all %}
                 <li>
-                <a href="{{ menu_item.url }}" class="nav-link">{{ menu_item.title }}</a>
+                <a href="{{ menu_item.link }}" class="nav-link" {% if menu_item.open_in_new_tab %} target="_blank" {% endif %}>
+                    {{ menu_item.title }}
+                </a>
                 </li>
             {% endfor %}
         </ul>
