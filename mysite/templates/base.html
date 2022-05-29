@@ -31,14 +31,30 @@
 
     <nav class="container-fluid">
         <ul>
-            <li><strong>WagTail Intro Site</strong></li>
+            <li><strong><a href="{% url 'wagtail_serve' '' %}">WagTail Intro Site</a></strong></li>
         </ul>
         <ul>
             {% for menu_item in navigation.menu_items.all %}
                 <li>
-                <a href="{{ menu_item.link }}" class="nav-link" {% if menu_item.open_in_new_tab %} target="_blank" {% endif %}>
+                    {% if menu_item.sub_menu_items.all %}
+                    <details role="list" dir="rtl">
+                        
+                        <summary aria-haspopup="listbox" role="link">                    <a href="{{ menu_item.link }}" class="nav-link" {% if menu_item.open_in_new_tab %} target="_blank" {% endif %}>{{ menu_item.title }}</a>                        </summary>
+                        <ul role="listbox">
+                            {% for sub_menu_item in menu_item.sub_menu_items.all %}  
+                            <li>
+                                <a href="{{ sub_menu_item.link }}" {% if sub_menu_item.open_in_new_tab %} target="_blank" {% endif %}>
+                                    {{ sub_menu_item.title }}
+                                </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                      </details>
+                    {% else %} 
+                    <a href="{{ menu_item.link }}" class="nav-link" {% if menu_item.open_in_new_tab %} target="_blank" {% endif %}>
                     {{ menu_item.title }}
-                </a>
+                    </a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

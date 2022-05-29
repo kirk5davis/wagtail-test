@@ -10,7 +10,7 @@ from modelcluster.models import ClusterableModel
 
 from django_extensions.db.fields import AutoSlugField
 
-class MenuItem(Orderable):
+class MenuItem(Orderable, ClusterableModel):
     """The orderable menu items model."""
 
     link_title = models.CharField(
@@ -37,7 +37,8 @@ class MenuItem(Orderable):
         FieldPanel("link_title"),
         FieldPanel("link_url"),
         PageChooserPanel("link_page"),
-        FieldPanel("open_in_new_tab")
+        FieldPanel("open_in_new_tab"),
+        InlinePanel("sub_menu_items", label="Sub Menu Item", heading="Sub Menu Item")
     ]
 
     @property
@@ -76,3 +77,50 @@ class Menu(ClusterableModel):
 
     def __str__(self):
         return self.title
+
+class SubMenuItem(Orderable):
+    """The orderable sub-menu items model."""
+    link_title = models.CharField(
+        blank=True, 
+        null=True, 
+        max_length=50
+    )
+    link_url = models.CharField(
+        max_length=500,
+        blank=True,
+    )
+    link_page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        blank=True,
+        related_name="+",
+        on_delete=models.CASCADE,
+    )
+    open_in_new_tab = models.BooleanField(default=False, blank=True)
+
+    page = ParentalKey("MenuItem", related_name="sub_menu_items")
+
+    panels = [
+        FieldPanel("link_title"),
+        FieldPanel("link_url"),
+        PageChooserPanel("link_page"),
+        FieldPanel("open_in_new_tab")
+    ]
+
+    @property
+    def link(self) -> str:
+        if self.link_page:
+            return self.link_page.url
+        elif self.link_url:
+            return self.link_url
+        else:
+            return '#'
+    
+    @property
+    def title(self):
+        if self.link_page and not self.link_title:
+            return self.link_page.title
+        elif self.link_title: 
+            return self.link_title
+        else:
+            return "Missing Title"
