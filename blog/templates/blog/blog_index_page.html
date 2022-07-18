@@ -11,6 +11,7 @@
 
     {% for post in blogpages %}
         {% with post=post.specific %}
+        <article>
             <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
 
             {% with post.main_image as main_image %}
@@ -21,6 +22,7 @@
         
             {{ post.intro }}
             {{ post.body|richtext }}
+        </article>
         {% endwith %}
     {% endfor %}
 
